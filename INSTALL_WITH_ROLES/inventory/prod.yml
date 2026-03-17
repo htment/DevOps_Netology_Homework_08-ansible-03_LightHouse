@@ -1,0 +1,28 @@
+---
+clickhouse:
+  hosts:
+    clickhouse-01:
+      ansible_host: clickhouse-server
+      ansible_connection: docker
+
+vector:
+  hosts:
+    vector-01:
+      ansible_host: vector-container
+      container_name: vector-container
+      ansible_connection: docker
+
+
+lighthouse:
+  hosts:
+    lighthouse-01:
+      ansible_host: lighthouse-container
+      container_name: lighthouse-container
+      ansible_connection: docker
+      lighthouse_repo: "https://github.com/VKCOM/lighthouse.git"
+      lighthouse_version: "master"
+      lighthouse_path: "/var/www/lighthouse"
+      nginx_config_path: "/etc/nginx/conf.d/lighthouse.conf"
+
+# Nginx variables
+nginx_config_path: "/etc/nginx/conf.d/lighthouse.conf"

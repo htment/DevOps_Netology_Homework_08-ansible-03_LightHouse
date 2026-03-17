@@ -1,0 +1,11 @@
+[sources.in]
+type = "file"
+include = ["/var/log/**/*.log"]
+ignore_older_secs = 600
+
+[sinks.out]
+type = "clickhouse"
+inputs = ["in"]
+endpoint = "http://clickhouse:8123"
+database = "logs"
+table = "logs"

@@ -1,0 +1,38 @@
+---
+- name: Install and configure all services
+  hosts: all
+  gather_facts: true
+  vars_files:
+    - vars/main.yml
+  roles:
+    - role: common
+      tags: [common]
+
+- name: Setup ClickHouse
+  hosts: clickhouse
+  gather_facts: true
+  vars_files:
+    - vars/main.yml
+  roles:
+    - role: clickhouse
+      tags: [clickhouse, db]
+
+- name: Setup Vector
+  hosts: vector
+  gather_facts: true
+  vars_files:
+    - vars/main.yml
+  vars:
+    vector_version: "0.42.0"
+  roles:
+    - role: vector
+      tags: [vector, logging]
+
+- name: Setup Lighthouse
+  hosts: lighthouse
+  gather_facts: true
+  vars_files:
+    - vars/main.yml
+  roles:
+    - role: lighthouse
+      tags: [lighthouse, web]

@@ -1,0 +1,32 @@
+FROM quay.io/centos/centos:stream9
+
+ENV container docker
+
+RUN dnf install -y \
+    systemd \
+    openssh-server \
+    sudo \
+    passwd \
+    shadow-utils \
+    vim \
+    nano \
+    net-tools \
+    iputils \
+    procps-ng \
+    curl-minimal \
+    && dnf clean all
+
+RUN useradd -m -s /bin/bash art && \
+    echo "art:123" | chpasswd && \
+    usermod -aG wheel art
+
+RUN echo "%wheel ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/wheel
+
+RUN ssh-keygen -A
+RUN systemctl enable sshd
+
+VOLUME ["/sys/fs/cgroup"]
+
+STOPSIGNAL SIGRTMIN+3
+
+CMD ["/sbin/init"]

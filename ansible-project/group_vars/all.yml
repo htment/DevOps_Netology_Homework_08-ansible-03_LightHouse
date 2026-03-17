@@ -1,0 +1,23 @@
+---
+# ClickHouse variables
+clickhouse_version: "24.3.3.102"
+clickhouse_packages:
+  - clickhouse-client
+  - clickhouse-server
+  - clickhouse-common-static
+
+clickhouse_config_path: "/etc/clickhouse-server/config.xml"
+clickhouse_users_config_path: "/etc/clickhouse-server/users.xml"
+clickhouse_port: 8123
+
+# Vector variables
+vector_version: "0.21.2"
+vector_config_path: "/etc/vector/vector.toml"
+
+# Lighthouse variables
+lighthouse_repo: "https://github.com/VKCOM/lighthouse.git"
+lighthouse_version: "master"
+lighthouse_path: "/var/www/lighthouse"
+
+# Nginx variables
+nginx_config_path: "/etc/nginx/conf.d/lighthouse.conf"

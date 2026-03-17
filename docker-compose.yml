@@ -1,0 +1,110 @@
+services:
+  clickhouse-server:
+    build:
+      context: .
+      dockerfile: Dockerfile_CENTOS_systemd
+    image: centos-systemd-custom
+    container_name: clickhouse-server
+    privileged: true
+#    cgroupns_mode: host  # Критически важно добавить эту строку!
+    ports:
+      - "2232:22"
+      - "8123:8123"
+      - "9000:9000"
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    networks:
+      art-network:
+        ipv4_address: 172.21.0.10
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw  # Меняем ro на rw
+      - art-data:/home/art/data
+      - ~/.ssh/id_ed25519.pub:/home/art/.ssh/authorized_keys:ro
+    tmpfs:
+      - /run
+      - /run/lock
+      - /tmp
+
+  vector-container:
+    build:
+      context: .
+      dockerfile: Dockerfile_CENTOS_systemd
+    image: centos-systemd-custom
+    container_name: vector-container
+    privileged: true
+#    cgroupns_mode: host
+    ports:
+      - "2233:22"
+      - "8686:8686"
+      - "8696:8696"
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    networks:
+      art-network:
+        ipv4_address: 172.21.0.11
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+      - art-data:/home/art/data
+      - ~/.ssh/id_ed25519.pub:/home/art/.ssh/authorized_keys:ro
+    tmpfs:
+      - /run
+      - /run/lock
+      - /tmp
+
+  lighthouse-container:
+    build:
+      context: .
+      dockerfile: Dockerfile_CENTOS_systemd
+    image: centos-systemd-custom
+    container_name: lighthouse-container
+    privileged: true
+ #   cgroupns_mode: host
+    ports:
+      - "2234:22"
+      - "8081:80"
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    networks:
+      art-network:
+        ipv4_address: 172.21.0.12
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+      - art-data:/home/art/data
+      - ~/.ssh/id_ed25519.pub:/home/art/.ssh/authorized_keys:ro
+    tmpfs:
+      - /run
+      - /run/lock
+      - /tmp
+
+volumes:
+  art-data:
+    driver: local
+
+networks:
+  art-network:
+    driver: bridge
+    enable_ipv6: false
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16
+          gateway: 172.21.0.1
+
+#  clickhouse:
+#    image: clickhouse/clickhouse-server:latest
+#    container_name: clickhouse-server
+#    ports:
+#      - "8123:8123"
+#      - "9000:9000"
+#    environment:
+#      - CLICKHOUSE_USER=default
+#      - CLICKHOUSE_PASSWORD=123
+#    volumes:
+#      - ./playbook/clickhouse-config.xml:/etc/clickhouse-server/config.xml:ro
+#      - clickhouse-data:/var/lib/clickhouse
+#    restart: unless-stopped
+#    networks:
+#      - art-network
+

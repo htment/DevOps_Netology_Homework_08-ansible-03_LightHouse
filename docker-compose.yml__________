@@ -1,0 +1,51 @@
+services:
+
+  clickhouse-server:
+    image: clickhouse/clickhouse-server:latest
+    container_name: clickhouse-server
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    volumes:
+      - clickhouse-data:/var/lib/clickhouse
+    networks:
+      art-network:
+        ipv4_address: 172.21.0.10
+    restart: unless-stopped
+
+  vector:
+    image: timberio/vector:0.34.1-alpine
+    container_name: vector-container
+    ports:
+      - "8686:8686"
+    volumes:
+      - ./vector/vector.toml:/etc/vector/vector.toml:ro
+    networks:
+      art-network:
+        ipv4_address: 172.21.0.11
+    depends_on:
+      - clickhouse-server
+    restart: unless-stopped
+
+  lighthouse:
+    image: altinity/clickhouse-lighthouse
+    container_name: lighthouse-container
+    ports:
+      - "8080:80"
+    networks:
+      art-network:
+        ipv4_address: 172.21.0.12
+    depends_on:
+      - clickhouse-server
+    restart: unless-stopped
+
+volumes:
+  clickhouse-data:
+
+networks:
+  art-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16
+          gateway: 172.21.0.1

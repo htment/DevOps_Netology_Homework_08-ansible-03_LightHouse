@@ -1,0 +1,23 @@
+---
+# ClickHouse variables
+clickhouse_version: "25.10.6.36"
+clickhouse_packages:
+  common: "clickhouse-common-static-{{ clickhouse_version }}.x86_64.rpm"
+  server: "clickhouse-server-{{ clickhouse_version }}.x86_64.rpm"
+  client: "clickhouse-client-{{ clickhouse_version }}.x86_64.rpm"
+clickhouse_path: "/var/lib/clickhouse"
+clickhouse_http_port: 8123
+clickhouse_tcp_port: 9000
+
+# Vector variables
+vector_version: "0.42.0"
+vector_package: "vector-{{ vector_version }}-1.x86_64.rpm"
+vector_config_path: "/etc/vector/vector.toml"
+vector_data_dir: "/var/lib/vector"
+
+# Lighthouse variables
+lighthouse_repo: "https://github.com/VKCOM/lighthouse.git"
+lighthouse_version: "master"
+lighthouse_path: "/var/www/lighthouse"
+nginx_config_path: "/etc/nginx/conf.d/lighthouse.conf"
+lighthouse_port: 80

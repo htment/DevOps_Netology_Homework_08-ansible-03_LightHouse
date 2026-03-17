@@ -1,0 +1,11 @@
+[program:clickhouse-server]
+command=/usr/bin/clickhouse-server --config=/etc/clickhouse-server/config.xml
+user=clickhouse
+autostart=true
+autorestart=true
+startretries=3
+stopsignal=INT
+stopwaitsecs=60
+stdout_logfile=/var/log/clickhouse-server/clickhouse-server-stdout.log
+stderr_logfile=/var/log/clickhouse-server/clickhouse-server-stderr.log
+environment=CLICKHOUSE_LOGS=/var/log/clickhouse-server

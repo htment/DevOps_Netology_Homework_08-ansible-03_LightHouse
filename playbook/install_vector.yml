@@ -1,0 +1,66 @@
+- name: Install Vector
+  hosts: vector
+  vars:
+    vector_version: "0.42.0"
+
+  tasks:
+    - name: Download Vector RPM
+      ansible.builtin.get_url:
+        url: "https://packages.timber.io/vector/{{ vector_version }}/vector-{{ vector_version }}-1.x86_64.rpm"
+        dest: "/tmp/vector-{{ vector_version }}.rpm"
+        mode: '0644'
+      delegate_to: localhost
+
+    - name: Copy RPM to container
+      ansible.builtin.copy:
+        src: "/tmp/vector-{{ vector_version }}.rpm"
+        dest: "/tmp/vector.rpm"
+        mode: '0644'
+
+    - name: Install Vector
+      ansible.builtin.command:
+        cmd: rpm -ivh /tmp/vector.rpm
+      register: vector_install
+      failed_when: vector_install.rc != 0 and vector_install.rc != 1
+
+    - name: Create Vector config
+      ansible.builtin.copy:
+        dest: /etc/vector/vector.yaml
+        content: |
+          sources:
+            dummy:
+              type: demo_logs
+              format: apache_common
+              interval: 1
+            
+            http:
+              type: http_server
+              address: 0.0.0.0:8686
+          
+          sinks:
+            stdout:
+              type: console
+              inputs: ["dummy", "http"]
+              encoding:
+                codec: json
+        mode: '0644'
+
+    - name: Enable and start Vector
+      ansible.builtin.systemd:
+        name: vector
+        enabled: yes
+        state: started
+        daemon_reload: yes
+    
+    - name: restart vector
+      ansible.builtin.command: systemctl restart vector
+      ignore_errors: yes   
+
+    - name: Check Vector status
+      ansible.builtin.command: systemctl status vector
+      register: vector_status
+      changed_when: false
+
+    - name: Show Vector status
+      ansible.builtin.debug:
+        var: vector_status.stdout_lines

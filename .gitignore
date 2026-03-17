@@ -1,0 +1,6 @@
+*.rpm
+lighthouse/
+playbook/*.rpm
+*.log
+*.pid
+lighthouse/

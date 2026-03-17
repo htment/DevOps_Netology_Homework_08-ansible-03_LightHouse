@@ -1,0 +1,70 @@
+- name: Install Lighthouse
+  hosts: lighthouse
+  gather_facts: false
+  tags:
+    - lighthouse
+    - install
+
+  tasks:
+    - name: Install EPEL repository (for CentOS)
+      become: true
+      ansible.builtin.yum:
+        name: epel-release
+        state: present
+      tags:
+        - install
+
+    - name: Install git and nginx (CentOS)
+      become: true
+      ansible.builtin.yum:
+        name:
+          - git
+          - nginx
+        state: present
+        update_cache: true
+      tags:
+        - install
+
+    - name: Clone Lighthouse repository
+      ansible.builtin.git:
+        repo: "{{ lighthouse_repo }}"
+        dest: "{{ lighthouse_path }}"
+        version: "{{ lighthouse_version }}"
+        force: true
+      tags:
+        - download
+
+    - name: Configure Nginx for Lighthouse
+      become: true
+      ansible.builtin.template:
+        src: nginx_lighthouse.conf.j2
+        dest: "{{ nginx_config_path }}"
+        mode: 0644
+      notify: Restart nginx
+      tags:
+        - configure
+
+    - name: Remove default nginx config (CentOS)
+      become: true
+      ansible.builtin.file:
+        path: /etc/nginx/conf.d/default.conf
+        state: absent
+      notify: Restart nginx
+      tags:
+        - configure
+
+    - name: Start Nginx service
+      become: true
+      ansible.builtin.service:
+        name: nginx
+        state: started
+        enabled: true
+      tags:
+        - configure
+
+  handlers:
+    - name: Restart nginx
+      become: true
+      ansible.builtin.service:
+        name: nginx
+        state: restarted

@@ -1,0 +1,21 @@
+---
+clickhouse:
+  hosts:
+    clickhouse-01:
+      ansible_host: clickhouse-server  # Имя контейнера
+      ansible_connection: docker
+      ansible_user: root
+
+vector:
+  hosts:
+    vector-01:
+      ansible_host: vector-container  # Имя контейнера
+      ansible_connection: docker
+      ansible_user: root
+
+lighthouse:
+  hosts:
+    lighthouse-01:
+      ansible_host: lighthouse-container  # Имя контейнера
+      ansible_connection: docker
+      ansible_user: root
