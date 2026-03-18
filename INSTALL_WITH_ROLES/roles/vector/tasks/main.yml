@@ -18,6 +18,15 @@
   register: vector_install
   failed_when: vector_install.rc != 0 and vector_install.rc != 1
 
+# Добавляем создание директории для конфига
+- name: Create vector config directory
+  ansible.builtin.file:
+    path: /etc/vector
+    state: directory
+    mode: '0755'
+    owner: root
+    group: root
+
 - name: Create Vector config
   ansible.builtin.copy:
     dest: /etc/vector/vector.toml
