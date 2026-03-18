@@ -44,3 +44,22 @@ http://192.168.230.133:8081/#http://127.0.0.1:8123/
 
 http://192.168.230.133:8696/playground
 ![alt text](image-5.png)
+
+## Выполним проверки
+```
+ansible-lint site.ym
+
+```
+![alt text](image-6.png)
+
+
+```
+ansible-playbook -i inventory/prod.yml site.yml --check
+```
+![alt text](image-7.png)
+
+```
+ansible-playbook -i inventory/prod.yml site.yml --diff
+```
+![alt text](image-9.png)
+![alt text](image-8.png)
